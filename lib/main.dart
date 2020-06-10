@@ -1,5 +1,5 @@
+import 'package:Weather2/GetLocation.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 
 void main() {
@@ -12,7 +12,7 @@ class WeatherApp extends StatefulWidget {
 }
 
 class _WeatherAppState extends State<WeatherApp> {
-  String city = '';
+  String city = "";
 
   //Display image based on the current time
   displayImage() {
@@ -30,41 +30,31 @@ class _WeatherAppState extends State<WeatherApp> {
     }
   }
 
-  //Get the currrent location
-  //getCurrentLocation() async {
-  //Future : it mean that the result gonna be transmetted in some fiew second in the future
-  Future<void> getCurrentLocation() async {
-    try {
-      Position position = await Geolocator()
-          .getLastKnownPosition(desiredAccuracy: LocationAccuracy.high);
+  //getLocation
+  void getLocation() async {
+    GetLocation getLocation = GetLocation();
+    await getLocation.getCurrentLocation();
 
-      getCityName(position.latitude, position.longitude);
-
-      print('The value of your position is : $position');
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  //get the city name
-  Future<void> getCityName(double lat, double long) async {
-    List<Placemark> placemark =
-        await Geolocator().placemarkFromCoordinates(lat, long);
-
-    city = placemark[0].locality;
-    print('Your city name is : $city');
+    print("latitude : ${getLocation.latitude}");
+    print("Longitude : ${getLocation.longitude}");
+    print("city : ${getLocation.city}");
+    city = getLocation.city;
   }
 
   @override
   Widget build(BuildContext context) {
     //to get the location
-    getCurrentLocation();
+    getLocation();
 
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          title: const Text('Weather App'),
+          centerTitle: true,
+          title: const Text(
+            'Weather App',
+          ),
         ),
         body: Column(
           children: <Widget>[

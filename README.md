@@ -61,3 +61,5 @@ samples, guidance on mobile development, and a full API reference.
     * Geolocator().placemarkFromCoordinates
 
     <img src="assets/screen/screen3.png" width="290" height="470" />
+
+- Cleaning the code by creating a new class and put all the geolocator's function on it.
