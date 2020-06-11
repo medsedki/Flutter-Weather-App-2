@@ -78,3 +78,19 @@ samples, guidance on mobile development, and a full API reference.
 - New feacher :
 
     <img src="assets/screen/screen5.png" width="290" height="470" />
+
+- Fix Bug and add the refresh Button :
+
+<table>
+    <tr>
+        <td style="padding:10px">
+            <img src="assets/screen/screen6.png">
+        </td>
+        <td style="padding:10px">
+            <img src="assets/screen/screen7.png">
+        </td>
+        <td style="padding:10px">
+            <img src="assets/screen/screen8.png">
+        </td>
+    </tr>
+</table>

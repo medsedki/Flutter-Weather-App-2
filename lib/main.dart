@@ -110,7 +110,7 @@ class _WeatherAppState extends State<WeatherApp> {
   @override
   Widget build(BuildContext context) {
     //to get the location
-    getLocation();
+    //getLocation();
 
     var newFormat = DateFormat("yyyy-MM-dd hh:mm");
     String updatedDt = newFormat.format(now);
@@ -254,6 +254,26 @@ class _WeatherAppState extends State<WeatherApp> {
                     title: Text('Speed : $speed, Deg : $deg'),
                   ),
                 ),
+                Container(
+                  child: Center(
+                    child: FlatButton(
+                      child: Text(
+                        "Get Weather Info",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20.0,
+                          color: Colors.white,
+                        ),
+                      ),
+                      color: Colors.lightBlueAccent,
+                      onPressed: () {
+                        setState(() {
+                          getLocation();
+                        });
+                      },
+                    ),
+                  ),
+                )
               ],
             ),
           )),
