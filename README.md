@@ -74,3 +74,7 @@ samples, guidance on mobile development, and a full API reference.
 - Add Other Description about the weather :
 
     <img src="assets/screen/screen4.png" width="290" height="470" />
+
+- New feacher :
+
+    <img src="assets/screen/screen5.png" width="290" height="470" />

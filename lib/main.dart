@@ -17,16 +17,22 @@ class WeatherApp extends StatefulWidget {
 class _WeatherAppState extends State<WeatherApp> {
   String city = "";
 
+  //Api Key
+  String apiKey = "2f9db73a7e06c0763afd84b5c4f128a3";
+
   var description;
   var temp;
   var pressure;
   var humidity;
   var speed;
   var deg;
+  var name;
+
+  var now = DateTime.now();
 
   //Display image based on the current time
   displayImage() {
-    var now = DateTime.now();
+    //var now = DateTime.now();
     final currentTime = DateFormat.jm().format(now);
 
     if (currentTime.contains('AM')) {
@@ -61,6 +67,24 @@ class _WeatherAppState extends State<WeatherApp> {
     print(deg);
   }
 
+  //Get current temperature
+  Future<void> getTemp(double lat, double lon) async {
+    http.Response response = await http.get(
+        'https://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$lon&appid=$apiKey&units=metric');
+
+    print(response.body);
+
+    var dataDecoded = jsonDecode(response.body);
+    description = dataDecoded['weather'][0]['description'];
+    temp = dataDecoded['main']['temp'];
+    pressure = dataDecoded['main']['pressure'];
+    humidity = dataDecoded['main']['humidity'];
+    speed = dataDecoded['wind']['speed'];
+    deg = dataDecoded['wind']['deg'];
+    name = dataDecoded['name'];
+    print("temp : $temp");
+  }
+
   Future<String> getLocation() async {
     GetLocation getLocation = GetLocation();
     await getLocation.getCurrentLocation();
@@ -69,7 +93,9 @@ class _WeatherAppState extends State<WeatherApp> {
     print("Longitude : ${getLocation.longitude}");
     print("city : ${getLocation.city}");
     city = getLocation.city;
-    getTempDesc(getLocation.latitude, getLocation.longitude);
+    //getTempDesc(getLocation.latitude, getLocation.longitude);
+
+    getTemp(getLocation.latitude, getLocation.longitude);
 
     return city;
   }
@@ -85,6 +111,9 @@ class _WeatherAppState extends State<WeatherApp> {
   Widget build(BuildContext context) {
     //to get the location
     getLocation();
+
+    var newFormat = DateFormat("yyyy-MM-dd hh:mm");
+    String updatedDt = newFormat.format(now);
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -106,12 +135,30 @@ class _WeatherAppState extends State<WeatherApp> {
                 Container(
                   margin: EdgeInsets.only(top: 20.0),
                   child: Text(
-                    "You are in : ",
+                    updatedDt,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 35.0,
-                      color: Colors.blue,
+                      color: Colors.orange,
                     ),
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: 30.0),
+                  child: Row(
+                    children: <Widget>[
+                      Container(
+                        margin: EdgeInsets.only(top: 20.0),
+                        child: Text(
+                          "You are in :",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 35.0,
+                            color: Colors.blue,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 Container(
@@ -123,7 +170,8 @@ class _WeatherAppState extends State<WeatherApp> {
                         child: Text(
                           //"Hergla",
                           //city,
-                          getCity(city),
+                          //getCity(city),
+                          getCity(name),
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 35.0,
