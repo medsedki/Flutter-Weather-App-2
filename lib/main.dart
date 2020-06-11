@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:Weather2/GetLocation.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
 void main() {
@@ -13,6 +16,13 @@ class WeatherApp extends StatefulWidget {
 
 class _WeatherAppState extends State<WeatherApp> {
   String city = "";
+
+  var description;
+  var temp;
+  var pressure;
+  var humidity;
+  var speed;
+  var deg;
 
   //Display image based on the current time
   displayImage() {
@@ -30,8 +40,28 @@ class _WeatherAppState extends State<WeatherApp> {
     }
   }
 
-  //getLocation
-  void getLocation() async {
+  //the first try ==> Success
+  Future<void> getTempDesc(double lat, double lon) async {
+    http.Response response = await http.get(
+        'https://samples.openweathermap.org/data/2.5/weather?lat=$lat&lon=$lon&appid=439d4b804bc8187953eb36d2a8c26a02');
+    print(response.body);
+
+    var dataDecoded = jsonDecode(response.body);
+    description = dataDecoded['weather'][0]['description'];
+    temp = dataDecoded['main']['temp'];
+    pressure = dataDecoded['main']['pressure'];
+    humidity = dataDecoded['main']['humidity'];
+    speed = dataDecoded['wind']['speed'];
+    deg = dataDecoded['wind']['deg'];
+    print(description);
+    print(temp);
+    print(pressure);
+    print(humidity);
+    print(speed);
+    print(deg);
+  }
+
+  Future<String> getLocation() async {
     GetLocation getLocation = GetLocation();
     await getLocation.getCurrentLocation();
 
@@ -39,6 +69,16 @@ class _WeatherAppState extends State<WeatherApp> {
     print("Longitude : ${getLocation.longitude}");
     print("city : ${getLocation.city}");
     city = getLocation.city;
+    getTempDesc(getLocation.latitude, getLocation.longitude);
+
+    return city;
+  }
+
+  String getCity(String c) {
+    if (c == null) {
+      return "in Progress";
+    } else
+      return c;
   }
 
   @override
@@ -49,73 +89,126 @@ class _WeatherAppState extends State<WeatherApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          centerTitle: true,
-          title: const Text(
-            'Weather App',
+          backgroundColor: Colors.white,
+          appBar: AppBar(
+            centerTitle: true,
+            title: const Text(
+              'Weather App',
+            ),
           ),
-        ),
-        body: Column(
-          children: <Widget>[
-            Container(
-              child: displayImage(),
-              //Image.asset('assets/dayTime.jpg'),
-            ),
-            Container(
-              margin: EdgeInsets.only(top: 20.0),
-              child: Text(
-                "You are in : ",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 35.0,
-                  color: Colors.blue,
+          body: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                Container(
+                  child: displayImage(),
+                  //Image.asset('assets/dayTime.jpg'),
                 ),
-              ),
-            ),
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: 30.0),
-              child: Row(
-                children: <Widget>[
-                  Container(
-                    margin: EdgeInsets.only(top: 20.0),
-                    child: Text(
-                      //"Hergla",
-                      city,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 35.0,
-                        color: Colors.blue,
-                      ),
+                Container(
+                  margin: EdgeInsets.only(top: 20.0),
+                  child: Text(
+                    "You are in : ",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 35.0,
+                      color: Colors.blue,
                     ),
                   ),
-                  Container(
-                    margin: EdgeInsets.only(left: 15.0, top: 20.0),
-                    child: Icon(
-                      Icons.location_on,
-                      color: Colors.red,
-                      size: 35.0,
-                    ),
-                  )
-                ],
-              ),
-            ),
-            Card(
-              margin: EdgeInsets.symmetric(
-                horizontal: 30.0,
-              ),
-              color: Colors.white,
-              child: ListTile(
-                leading: Icon(
-                  Icons.wb_sunny,
-                  color: Colors.amber,
                 ),
-                title: Text('mchamsa 35°'),
-              ),
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: 30.0),
+                  child: Row(
+                    children: <Widget>[
+                      Container(
+                        margin: EdgeInsets.only(top: 20.0),
+                        child: Text(
+                          //"Hergla",
+                          //city,
+                          getCity(city),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 35.0,
+                            color: Colors.blue,
+                          ),
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(left: 15.0, top: 20.0),
+                        child: Icon(
+                          Icons.location_on,
+                          color: Colors.red,
+                          size: 35.0,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                Card(
+                  margin: EdgeInsets.symmetric(
+                    horizontal: 30.0,
+                  ),
+                  color: Colors.white,
+                  child: ListTile(
+                    leading: Icon(
+                      Icons.wb_sunny,
+                      color: Colors.amber,
+                    ),
+                    title: Text('$description, Temp : $temp'),
+                  ),
+                ),
+                Card(
+                  margin: EdgeInsets.symmetric(
+                    horizontal: 30.0,
+                  ),
+                  color: Colors.white,
+                  child: ListTile(
+                    leading: Icon(
+                      Icons.present_to_all,
+                      color: Colors.amber,
+                    ),
+                    title: Text('Pressure : $pressure, Humidity : $humidity'),
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: 30.0),
+                  child: Row(
+                    children: <Widget>[
+                      Container(
+                        margin: EdgeInsets.only(top: 20.0),
+                        child: Text(
+                          "Wind",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 30.0,
+                            color: Colors.blue,
+                          ),
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(left: 15.0, top: 20.0),
+                        child: Image.asset(
+                          'assets/wind.png',
+                          height: 50.0,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Card(
+                  margin: EdgeInsets.symmetric(
+                    horizontal: 30.0,
+                  ),
+                  color: Colors.white,
+                  child: ListTile(
+                    leading: Icon(
+                      Icons.compare_arrows,
+                      color: Colors.blueAccent,
+                    ),
+                    title: Text('Speed : $speed, Deg : $deg'),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
+          )),
     );
   }
 }

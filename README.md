@@ -63,3 +63,14 @@ samples, guidance on mobile development, and a full API reference.
     <img src="assets/screen/screen3.png" width="290" height="470" />
 
 - Cleaning the code by creating a new class and put all the geolocator's function on it.
+
+- Get current temperature :
+
+    * Import the http in the dependencies
+    * Import in the main.dart :
+        - import 'package:http/http.dart' as http;
+        - import 'package:intl/intl.dart';
+
+- Add Other Description about the weather :
+
+    <img src="assets/screen/screen4.png" width="290" height="470" />
